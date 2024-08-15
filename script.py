@@ -180,6 +180,7 @@ async def mainfun(CONTEST_SLUG, CHALLENGE_SLUGS, CUTOFF_LIMIT):
         print("=====================\n")
     
     # prepareResults()
+    print(res)
     print("plism ended successfully!")
     return res
 

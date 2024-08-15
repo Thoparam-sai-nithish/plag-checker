@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contest Submission</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Plag Check</h1>
+        <form id="contestForm" class="needs-validation" novalidate>
+            <div class="row mb-3 mt-5">
+                <label for="contest" class="col-sm-2 col-form-label"><b>Contest Name:</b></label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="contest" name="contest" required>
+                    <div class="invalid-feedback">Contest name is required.</div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="challenges" class="col-sm-2 col-form-label fw-2"><b>Challenges:</b></label>
+                <div class="col-sm-10">
+                    <div id="challengeInput" class="c">
+                        <input type="text" class="form-control challenge mt-2" required>
+                        <div class="invalid-feedback">Challenge is required.</div>
+                    </div>
+                    <button type="button" class="btn btn-primary mt-2" onclick="addChallengeInput()">Add Challenge</button>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="cutoff" class="col-sm-2 col-form-label"><b>Cutoff:</b></label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="cutoff" name="cutoff" min="1" required>
+                    <div class="invalid-feedback">Cutoff must be a number greater than 0.</div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-12 text-center">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-12 text-center" id="submit-message"></div>
+            </div>
+        </form>
+        <h1>Results</h1>
+        <div id="resultsContainer" class="fs-5"></div>
+    </div>
+
+    <script>
+        function addChallengeInput() {
+            const challengeInput = document.createElement('input');
+            challengeInput.type = 'text';
+            challengeInput.className = 'form-control challenge';
+            challengeInput.required = true;
+            document.getElementById('challengeInput').appendChild(challengeInput);
+        }
+
+        const form = document.getElementById('contestForm');
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const challenges = Array.from(document.querySelectorAll('.challenge'))
+                .map(input => input.value);
+
+            const jsonData = {
+                contest: document.getElementById('contest').value,
+                challenge: challenges, 
+                cutoff: document.getElementById('cutoff').value
+            };
+
+            fetch('/getResults', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('resultsContainer').innerHTML = '';
+                data.Data.forEach(lang => {
+                    const result = document.createElement('a');
+                    result.href = lang[1]
+                    result.textContent = lang[0]
+                    result.target = '_blank'
+                    result.style.display = 'block'
+                    document.getElementById('resultsContainer').appendChild(result);
+                });
+            })
+            .catch(error => console.error('Error:', error)); 
+        });
+    </script>
+</body>
+</html>

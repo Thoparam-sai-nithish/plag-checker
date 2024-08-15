@@ -127,7 +127,7 @@ async def mainfun(CONTEST_SLUG, CHALLENGE_SLUGS, CUTOFF_LIMIT):
             if match:
                 url = match.group(1)
                 moss_urls.append(url)
-                res.append((lang, url[0:-1]))
+                res.append((lang, url))
         connector = aiohttp.TCPConnector(limit=500) 
         async with aiohttp.ClientSession(connector=connector) as session:
             tasks = []
